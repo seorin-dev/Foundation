@@ -109,6 +109,7 @@ class ZoomImageCell<T>: UICollectionViewCell, ImageSliderCell, Reusable, UIScrol
         shotImageView.sd_setImage(with: url) {[weak self] image, _, _, _ in
             guard let `self` = self else { return }
             self.imageDidSet()
+            self.isImage = true
         }
     }
     
