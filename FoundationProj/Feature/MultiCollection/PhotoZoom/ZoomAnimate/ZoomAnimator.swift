@@ -115,7 +115,8 @@ class ZoomAnimator: NSObject {
         self.fromDelegate?.transitionWillStartWith(zoomAnimator: self)
         self.toDelegate?.transitionWillStartWith(zoomAnimator: self)
         
-        toReferenceImageView.isHidden = false
+//        toReferenceImageView.isHidden = false
+        toReferenceImageView.alpha = 0.0
         
         let referenceImage = fromReferenceImageView.image
         
@@ -129,17 +130,20 @@ class ZoomAnimator: NSObject {
         }
         
         containerView.insertSubview(toVC.view, belowSubview: fromVC.view)
-        fromReferenceImageView.isHidden = true
+//        fromReferenceImageView.isHidden = true
         
         let finalTransitionSize = toReferenceImageViewFrame
         
         UIView.animate(withDuration: transitionDuration(using: transitionContext),
                        delay: 0,
-                       options: [],
+                       options: [.curveEaseInOut],
                        animations: {
                         fromVC.view.alpha = 0
                         self.transitionImageView?.frame = finalTransitionSize
                         toVC.tabBarController?.tabBar.alpha = 1
+                        self.transitionImageView?.alpha = 0.2
+                        
+                        toReferenceImageView.alpha = 1
         }, completion: { completed in
             
             self.transitionImageView?.removeFromSuperview()

@@ -68,10 +68,12 @@ class MultiCollectionCell: UICollectionViewCell, Reusable {
     func bindData(){
         assetRelay.map{
             $0.getAsset
-        }
-        .flatMap(requestImageFromAseet(asset:)).observeOn(MainScheduler.instance)
-        .subscribe(onNext:{
-            self.image = $0
+        }.subscribe(onNext: { asset in
+            _ = PHRepository.getImageFromAsset(asset, options: PHRepository.defaultImageFetchOptions, completion: { [weak self] image in
+                guard let `self` = self else { return }
+                print("imageAsset : \(asset.description)")
+                self.imageView.image = image
+            })
         }).disposed(by: rx.disposeBag)
     }
 
@@ -81,7 +83,7 @@ class MultiCollectionCell: UICollectionViewCell, Reusable {
     
     func requestImageFromAseet(asset: PHAsset) -> Observable<UIImage>{
         var fetchOption = PHRepository.FetchOptions()
-        fetchOption.size = CGSize(width: 400, height: 400)
+        fetchOption.size = CGSize(width: 300, height: 300)
         fetchOption.contentMode = .default
         let imageFunc = PHRepository.GetFuncImageFromAsset(fetchOptions:  fetchOption)
         return imageFunc(asset)

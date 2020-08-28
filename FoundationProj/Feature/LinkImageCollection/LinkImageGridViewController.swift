@@ -67,9 +67,15 @@ class LinkImageGridViewController: UIBaseViewController, ViewModelProtocol {
     
     // MARK: - Methods
     
+    override func willTransition(to newCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.willTransition(to: newCollection, with: coordinator)
+        self.subView.collectionView.collectionViewLayout.invalidateLayout()
+    }
+
 }
 
 extension LinkImageGridViewController : ZoomAnimatorDelegate {
+    
     func zoominRefereneceView(for zoomAnimator: ZoomAnimator) -> UIView? {
         return nil
     }
@@ -141,11 +147,43 @@ extension LinkImageGridViewController : ZoomAnimatorDelegate {
             //Otherwise the cell should be visible
         else {
             //Prevent the collectionView from returning a nil value
-            guard let guardedCell = (self.subView.collectionView.cellForItem(at: selectedIndexPath) as? LinkImageCell) else {
+            guard let guardedCell = (self.subView.collectionView.cellForItem(at: selectedIndexPath) as? LinkImageCell), let factorImageSize =  guardedCell.imageView.image?.size  else {
                 return CGRect(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY, width: 100.0, height: 100.0)
             }
-            //The cell was found successfully
-            return guardedCell.frame
+            let ratio = factorImageSize.width / factorImageSize.height
+            
+            if ratio > 1{
+                // width long
+                let imageHeight = guardedCell.frame.height
+                let halfHeight = imageHeight / 2
+                let imageWidth = imageHeight * ratio
+                let halfWidth = imageWidth / 2
+                                
+                let rect = CGRect.init(x: guardedCell.frame.midX - halfWidth, y: guardedCell.frame.midY - halfHeight, width: imageWidth, height: imageHeight)
+                
+                return rect
+                
+            }else {
+                // height long
+                let heightRatio = factorImageSize.height / factorImageSize.width
+                let imageWidth = guardedCell.frame.width
+                let halfWidth = imageWidth / 2
+                let imageHeight = imageWidth * heightRatio
+                let halfHeight = imageHeight / 2
+                
+                let rect = CGRect.init(x: guardedCell.frame.midX - halfWidth, y: guardedCell.frame.midY - halfHeight, width: imageWidth, height: imageHeight)
+                
+                return rect
+                
+            }
+        
+            
+//            let imageSize = ratio > 1 ? CGSize(width: factorImageSize.width, height: contentScaleFactor * factorImageSize.height) : CGSize(width: guardedCell.imageView * factorImageSize.width, height: guardedCell.imageView.contentScaleFactor * factorImageSize.height)
+//
+//            //The cell was found successfully
+//            let rect = CGRect.init(x: guardedCell.frame.minX - (imageSize.width / 2), y: guardedCell.frame.minY - (imageSize.height / 2), width: imageSize.width, height: imageSize.height)
+//
+//            return rect//guardedCell.frame
         }
     }
     

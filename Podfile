@@ -22,6 +22,7 @@ target 'FoundationProj' do
   pod 'Reusable'
   
   pod 'SDWebImage'
+  pod 'lottie-ios'
   
   target 'FoundationProjTests' do
     inherit! :search_paths

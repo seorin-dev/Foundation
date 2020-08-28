@@ -43,6 +43,7 @@ extension PHAsset{
             }else if self.isGIF{
                 return .gif(asset: self)
             }else if self.isVideo{
+                
                 return .video(asset: self)
             }else{
                 return .etc(asset: self)

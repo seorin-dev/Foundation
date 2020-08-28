@@ -15,11 +15,19 @@ enum AppStep: Step {
     case multiSelectTable
     case multiSelectCollection
     case linkCollection
+    case horizontalStackScroll
+    case webSchemeTest
+    case rotate
+    case playerSlider
+    case filterSlider
+    case rotateStackScroll
+    case toastWithView
     
     case imageZoom
     
-    case modalClose
+    case close
     case assetImageZoom([PHAsset], Int)
+    
     
     
     case linkImageZoom([URL], Int)

@@ -11,6 +11,7 @@ import RxCocoa
 import RxSwift
 import RxFlow
 import Action
+import CoreTelephony
 
 class MainViewModel: ViewModelType, Stepper {
     // MARK: - Stepper
@@ -39,8 +40,8 @@ class MainViewModel: ViewModelType, Stepper {
     }
     
     func stateBind(state: ViewModel.State){
-        _ = state.viewLife.subscribe(onNext: {
-            print("Main ------ \($0)")
+        _ = state.viewLife.subscribe(onNext: { _ in
+//            print("Main ------ \($0)")
         })
         
         state.viewLife.filter{$0 == .viewDidAppear}.bind(to: loadAction.inputs).disposed(by: disposeBag)
@@ -48,19 +49,35 @@ class MainViewModel: ViewModelType, Stepper {
     
     func transform(req: ViewModel.Input) -> ViewModel.Output {
         
-        req.selectItem.subscribe(onNext: self.emitStep(_:)).disposed(by: disposeBag)
+        req.selectItem.map(emitStep(_:))
+            .bind(to: self.steps)
+            .disposed(by: disposeBag)
         
         return Output(itemList: loadAction.elements)
     }
     
-    func emitStep(_ screen: Screen){
+    func emitStep(_ screen: Screen) -> AppStep{
         switch screen {
         case .multiTable:
-            self.steps.accept(AppStep.multiSelectTable)
+            return .multiSelectTable
         case .multiCollection:
-            self.steps.accept(AppStep.multiSelectCollection)
+            return .multiSelectCollection
         case .linkCollection:
-            self.steps.accept(AppStep.linkCollection)
+            return .linkCollection
+        case .horizontalStackScroll:
+            return .horizontalStackScroll
+        case .webTest:
+            return .webSchemeTest
+        case .rotateView:
+            return .rotate
+        case .playerSlider:
+            return .playerSlider
+        case .rotateStackScroll:
+            return .rotateStackScroll
+        case .filterSlider:
+            return .filterSlider
+        case .toastWithView:
+            return .toastWithView
         }
     }
 }

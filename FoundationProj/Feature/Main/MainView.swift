@@ -36,12 +36,22 @@ class MainView: UIBasePreviewType {
         $0.rowHeight = 55
     }
     
+    lazy var refreshControl = CustomRefreshControl(lottie: nil)
+
     // MARK: - Methods
     func setupLayout() {
+        table.refreshControl = refreshControl
+        table.delegate = self // or table.delegate = refreshControl
+        
+        refreshControl.rx.refreshTrigger.subscribe(onNext: {
+            _ in self.refreshControl.endRefresh()
+        }).disposed(by: rx.disposeBag)
+        
         self.addSubview(table)
         table.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
+        
     }
     
     func setupDI(observable: Observable<[Model]>) {
@@ -51,6 +61,16 @@ class MainView: UIBasePreviewType {
             cell.label.text = data.getTitle()
         }.disposed(by: rx.disposeBag)
         
+    }
+}
+
+extension MainView: UIScrollViewDelegate, UITableViewDelegate{
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        refreshControl.scrollViewDidScroll(scrollView)
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        refreshControl.scrollViewDidEndDragging(scrollView, willDecelerate: decelerate)
     }
 }
 

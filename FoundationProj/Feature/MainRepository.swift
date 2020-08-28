@@ -10,6 +10,14 @@ import UIKit
 
 struct MainRepository {
     static func mainList() -> [Screen]{
-        [Screen.multiTable, Screen.multiCollection, Screen.linkCollection]
+        [.multiCollection,
+         .linkCollection,
+         .horizontalStackScroll,
+         .webTest,
+         .rotateView,
+         .playerSlider,
+         .filterSlider,
+         .rotateStackScroll,
+         .toastWithView]
     }
 }

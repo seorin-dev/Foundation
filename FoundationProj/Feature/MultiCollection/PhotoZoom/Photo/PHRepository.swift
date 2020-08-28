@@ -81,7 +81,7 @@ struct PHRepository {
         options.deliveryMode = .highQualityFormat
         options.resizeMode = .fast
         options.isNetworkAccessAllowed = true
-        options.isSynchronous = true
+//        options.isSynchronous = nil
         
         return options
     }
@@ -232,7 +232,7 @@ struct PHRepository {
     /// specific get image from asset
     public static func getImageFromAsset(_ asset: PHAsset, options: PHImageRequestOptions = defaultImageFetchOptions, fetchOptions: FetchOptions = FetchOptions(), completion: @escaping (_ result: UIImage) -> ()) -> PHImageRequestID{
 //        print("getImageFromAsset: \(asset)")
-//        let imageManager = PHCachingImageManager.default()
+        let imageManager = PHImageManager.default()
         
 //        self.imageManager.startCachingImages(for: [asset], targetSize: fetchOptions.size ?? CGSize(width: 720, height: 1024), contentMode: .aspectFill, options: options)
         
@@ -242,6 +242,16 @@ struct PHRepository {
             completion(image)
         })
     }
+    
+    // gif
+    public static func getImageDataFromAsset(_ asset: PHAsset, options: PHImageRequestOptions = defaultImageFetchOptions,  completion: @escaping (_ result: UIImage) -> ()) -> PHImageRequestID {
+        return imageManager.requestImageDataAndOrientation(for: asset, options: options, resultHandler: {
+            (imageData, UTI, _, _) in
+            guard let data = imageData, let image = UIImage.sd_image(withGIFData: data) else { return }
+            completion(image)
+        })
+    }
+    
     
     public static func getAssetsFromAlbum(_ album: PHAssetCollection, _ fetchOptions: FetchOptions = FetchOptions(), completion: @escaping (_ result: AssetFetchResult<PHAsset>) -> ()) {
 //        print("getAssetsFromAlbum: \(album)")

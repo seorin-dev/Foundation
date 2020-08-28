@@ -19,7 +19,7 @@ class InitFlow: Flow {
         return self.rootViewController
     }
     
-    private lazy var rootViewController = UINavigationController().then {
+    private lazy var rootViewController = NavigationController().then {
           $0.setNavigationBarHidden(false, animated: false)
       }
     
@@ -35,14 +35,33 @@ class InitFlow: Flow {
             return navigateToMultiTable()
         case .multiSelectCollection:
             return navigateToMultiCollection()
+        case .webSchemeTest:
+            return navigateToWebTest()
         case .linkCollection:
             return navigateToLinkImageCollection()
         case .linkImageZoom(let urls, let index):
             return modalShowImageSlider(withItems: urls, initialIndex: index)
-        case .modalClose:
-            return modalDismiss()
+        case .close:
+            return popView()
         case .assetImageZoom(let aseets, let index):
             return modalShowImageSlider(withItems: aseets, initialIndex: index)
+        case .horizontalStackScroll:
+            return navigateToHSS()
+        case .rotate:
+            return FlowSugar(RotateViewModel(), RotateViewController.self)
+                .oneStepPushBy(self.rootViewController)
+        case .playerSlider:
+            return FlowSugar(PlayerViewModel(), PlayerViewController.self)
+                .oneStepPushBy(self.rootViewController)
+        case .filterSlider:
+            return FlowSugar(FilterSliderViewModel(), FilterSliderViewController.self)
+                .oneStepPushBy(self.rootViewController)
+        case .rotateStackScroll:
+            return FlowSugar(RotateSSViewModel(), RotateSSViewController.self)
+            .oneStepPushBy(self.rootViewController)
+        case .toastWithView:
+            return FlowSugar(ToastShowViewModel(), ToastShowViewController.self)
+                .oneStepPushBy(self.rootViewController)
         default:
             return .none
         }
@@ -50,6 +69,20 @@ class InitFlow: Flow {
 }
 
 extension InitFlow{
+    private func navigateToWebTest() -> FlowContributors{
+        FlowSugar(WebTestViewModel(), WebTestViewController.self)
+            .navigationItem(with: {
+                $0.title = "web scheme test"
+            }).oneStepPushBy(self.rootViewController)
+    }
+    
+    private func navigateToHSS() -> FlowContributors{
+        FlowSugar(HorizontalStackScrollViewModel(), HorizontalStackScrollViewController.self)
+            .navigationItem(with: {
+                $0.title = "HorizontalStackScroll"
+            }).oneStepPushBy(self.rootViewController)
+    }
+    
     private func navigateToMultiTable() -> FlowContributors{
         FlowSugar(TableMultiSelectionViewModel(), TableMultiSelectionViewController.self)
             .navigationItem(with:{
@@ -74,7 +107,7 @@ extension InitFlow{
     
     private func modalShowImageSlider<T>(withItems items: [T], initialIndex: Int) -> FlowContributors{
         
-        FlowSugar(PhotoZoomViewModel(items, initialIndex), PhotoZoomViewController<T>.self)
+        FlowSugar(ZoomingViewModel(items, initialIndex), ZoomingViewController<T>.self)
             .setVCProperty(viewControllerBlock:{
                 
                 self.rootViewController.delegate = $0.transitionController
@@ -94,7 +127,7 @@ extension InitFlow{
             .oneStepPushBy(self.rootViewController)
     }
     
-    private func modalDismiss() -> FlowContributors{
+    private func popView() -> FlowContributors{
         rootViewController.popViewController(animated: true)
         return .none
     }

@@ -78,7 +78,9 @@ class ZoomDismissalInteractionController: NSObject {
         
         transitionImageView.center = newCenter
         
-        toReferenceImageView.isHidden = true
+//        toReferenceImageView.isHidden = true
+        
+        toReferenceImageView.alpha = 0.0
         
         transitionContext.updateInteractiveTransition(1 - scale)
         
@@ -103,7 +105,7 @@ class ZoomDismissalInteractionController: NSObject {
 //            velocityCheck =  newCenter.x < anchorPoint.x
             
 //            NSLog("velocity : \(velocity.y < 0)")
-            if velocity.y < -200 || translatedPoint.y < 85{
+            if /* velocity.y < -100 ||*/ translatedPoint.y < 50{
                 
                 //cancel
                 UIView.animate(
@@ -137,17 +139,21 @@ class ZoomDismissalInteractionController: NSObject {
             
             UIView.animate(withDuration: 0.25,
                            delay: 0,
-                           options: [],
+                           options: [.curveEaseInOut],
                            animations: {
                             fromVC.view.alpha = 0
                             transitionImageView.frame = finalTransitionSize
                             toVC.tabBarController?.tabBar.alpha = 1
+                            transitionImageView.alpha = 0.2
                             
+                            toReferenceImageView.alpha = 1
             }, completion: { completed in
                 
                 transitionImageView.removeFromSuperview()
                 toReferenceImageView.isHidden = false
                 fromReferenceImageView.isHidden = false
+                
+                
                 
                 self.transitionContext?.finishInteractiveTransition()
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)

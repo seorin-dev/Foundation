@@ -24,7 +24,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
         }
         
+        DeviceOrientationHelper.shared.startDeviceOrientationNotifier()
+        
         return true
     }
-}
+    
+    
+    var orientationLock = UIInterfaceOrientationMask.portrait
 
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+            return self.orientationLock
+    }
+}

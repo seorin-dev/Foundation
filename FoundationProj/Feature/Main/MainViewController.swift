@@ -28,12 +28,25 @@ class MainViewController: UIBaseViewController, ViewModelProtocol {
         // Do any additional setup after loading the view.
         setupLayout()
         bindingViewModel()
-        stateBind()        
+        stateBind()
+        addNotification()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+    }
+    
+    func addNotification(){
+        NotificationCenter.default.addObserver(self, selector: #selector(self.orientationChange(_:)), name: Notification.Name("CMOrientationChange"), object: nil)
+    }
+    
+    @objc func orientationChange(_ noti: Notification){
+        guard let orient = noti.userInfo?["UIDeviceOrientation"] as? UIDeviceOrientation else {
+            return
+        }
+        
+        print("orientaion : \(orient.rawValue)")
     }
     
     // MARK: - Binding
@@ -59,4 +72,5 @@ class MainViewController: UIBaseViewController, ViewModelProtocol {
     }
     
     // MARK: - Methods
+    
 }

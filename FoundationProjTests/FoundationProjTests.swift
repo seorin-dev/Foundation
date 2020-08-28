@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import Foundation
 @testable import FoundationProj
 
 class FoundationProjTests: XCTestCase {
@@ -31,4 +32,12 @@ class FoundationProjTests: XCTestCase {
         }
     }
 
+    func testTime() {
+        XCTAssertEqual(10.timeString, "10")
+        XCTAssertEqual(0.timeString, "00")
+        XCTAssertEqual(6.timeString, "06")
+        XCTAssertEqual((-6).timeString, "06")
+        XCTAssertEqual((-15).timeString, "15")
+    }
+    
 }
